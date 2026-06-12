@@ -537,7 +537,7 @@
   <script>
     // ==================== CONFIG ====================
     const JSONBIN_ID = "6a2a8a2cda38895dfeac7eca";
-    const JSONBIN_KEY = "$2a$10$SjTJd3D0tBhLZ5C8s.0Ef.5vCebu0ctZs9Fwhrxkss9DK2YsYbwru";
+    const JSONBIN_KEY = "$2a$10$S1Jd3D0tBhLZ5C8s.0Ef5vCebuGczTs9Fw";
 
     // ==================== STATE ====================
     let jobs = [];
@@ -650,15 +650,17 @@
     // ==================== JSONBIN ====================
     async function loadJobs() {
       try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest?meta=false`, {
+        const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest?meta=false&t=${Date.now()}`;
+        const res = await fetch(url, {
           headers: { "X-Master-Key": JSONBIN_KEY },
           cache: "no-store",
         });
         if (!res.ok) throw new Error(`JSONBin status ${res.status}`);
         const data = await res.json();
+        console.log("✅ Loaded from JSONBin:", data);
         return normalizeJobs(Array.isArray(data) ? data : (data.jobs || []));
       } catch (e) {
-        console.error("Load error:", e);
+        console.error("❌ Load error:", e);
         showToast("Could not refresh jobs");
         return jobs;
       }
